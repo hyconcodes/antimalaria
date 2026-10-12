@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
@@ -35,6 +35,18 @@
                 <flux:sidebar.item href="{{ route('home') }}#methodology">
                     Methodology and limitations
                 </flux:sidebar.item>
+                <flux:button
+                    variant="ghost"
+                    class="w-full justify-start"
+                    x-data
+                    x-on:click="$flux.dark = ! $flux.dark"
+                    x-bind:aria-label="$flux.dark ? 'Switch to light mode' : 'Switch to dark mode'"
+                    data-test="appearance-toggle"
+                >
+                    <flux:icon.sun x-show="$flux.dark" variant="mini" aria-hidden="true" />
+                    <flux:icon.moon x-show="! $flux.dark" variant="mini" aria-hidden="true" />
+                    <span x-text="$flux.dark ? 'Switch to light mode' : 'Switch to dark mode'">Toggle appearance</span>
+                </flux:button>
             </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />

@@ -7,7 +7,7 @@
         <header class="border-b border-zinc-800">
             <nav class="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-5 py-5 sm:px-8" aria-label="Main navigation">
                 <a href="{{ route('home') }}" class="flex items-center gap-3 font-semibold tracking-tight">
-                    <span class="grid size-10 place-items-center rounded-xl bg-indigo-400/10 text-sm font-bold text-indigo-300" aria-hidden="true">AM</span>
+                    <x-app-logo-icon class="size-10 shrink-0" />
                     <span>Antimalaria <span class="text-zinc-400">Research</span></span>
                 </a>
                 <div class="flex items-center gap-3">

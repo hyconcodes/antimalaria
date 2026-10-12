@@ -14,3 +14,18 @@ test('authenticated users can visit the dashboard', function () {
     $response = $this->get(route('dashboard'));
     $response->assertOk();
 });
+
+test('authenticated users can switch appearance from the sidebar', function () {
+    $this->actingAs(User::factory()->create())
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee('data-test="appearance-toggle"', false)
+        ->assertSee('$flux.dark = ! $flux.dark', false);
+});
+
+test('the public landing page uses the shared brand mark', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('data-brand-mark', false)
+        ->assertSee('favicon.svg', false);
+});

@@ -48,7 +48,7 @@ Requirements include PHP 8.3+, Composer, Node.js 22+, and npm.
    npm run build
    ```
 
-## Administrator configuration
+## Administrator configuration and first login
 
 There is no user-facing administrator promotion. Add the email address(es) of designated rule administrators to the deployment environment variable:
 
@@ -62,7 +62,9 @@ Multiple addresses may be comma-separated. Clear cached configuration after chan
 php artisan config:clear
 ```
 
-Administrators must sign in with an allow-listed account and can access **Scientific rules** from the authenticated navigation. Users who are not on the allow-list cannot view or change the rule catalogue.
+For the seeded local administrator, set `ANTIMALARIA_ADMIN_EMAILS=admin@antimalaria.com` in `.env`, clear cached configuration, then run `php artisan db:seed`. The seeder creates a verified account only if it does not already exist and prints a randomly generated temporary password once in the command output. Save it securely and change it after signing in. Re-running the seeder does not display or replace an existing account's password.
+
+Run the seeder only against a local or otherwise approved database. It does not reset the database. Administrators must sign in with an allow-listed account and can access **Scientific rules** from the authenticated navigation. Users who are not on the allow-list cannot view or change the rule catalogue.
 
 The workflow supports draft creation/editing, submission for review, approval, activation, retirement, rule revisions, and an actor-attributed audit history with before/after snapshots. Approval and activation are separate; only approved, enabled rules affect new assessments. A new revision replaces an enabled earlier revision with the same stable rule key. There is no independent second-person approval enforcement: one allow-listed administrator can submit and approve a rule. This workflow is an application authorization boundary, not evidence that scientific review has occurred.
 
