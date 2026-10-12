@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\ResistanceAssessment\MarkerCatalog;
+use App\Enums\AssessmentOutcome;
 use App\Models\Assessment;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
@@ -19,6 +20,29 @@ new #[Title('Assessment result')] class extends Component {
     }
 }; ?>
 
+@php
+$outcomeStyles = match ($assessment->result_code) {
+    AssessmentOutcome::ResistanceAssociatedPattern => [
+        'panel' => 'border-rose-300 bg-rose-50 dark:border-rose-800 dark:bg-rose-950/30',
+        'label' => 'text-rose-800 dark:text-rose-200',
+    ],
+    AssessmentOutcome::NoQualifyingMarker => [
+        'panel' => 'border-sky-300 bg-sky-50 dark:border-sky-800 dark:bg-sky-950/30',
+        'label' => 'text-sky-800 dark:text-sky-200',
+    ],
+    AssessmentOutcome::Indeterminate => [
+        'panel' => 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30',
+        'label' => 'text-amber-800 dark:text-amber-200',
+    ],
+};
+
+$plainLanguageExplanation = match ($assessment->result_code) {
+    AssessmentOutcome::ResistanceAssociatedPattern => 'At least one marker matched an approved rule. This is a finding about the marker pattern only; it does not diagnose malaria or show whether a treatment will work.',
+    AssessmentOutcome::NoQualifyingMarker => 'The approved rules checked did not find a marker pattern that met their criteria. This does not prove susceptibility or rule out resistance mechanisms that were not checked.',
+    AssessmentOutcome::Indeterminate => 'The available information was not enough for the system to give a clear result. A required marker may be missing or unsupported, or there may be no approved rule available for the submitted markers.',
+};
+@endphp
+
 <div class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
         <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div class="flex flex-col gap-2">
@@ -32,15 +56,22 @@ new #[Title('Assessment result')] class extends Component {
         </header>
 
         <section class="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
-            <div class="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
-                <div class="flex flex-col gap-2">
-                    <flux:text>Application outcome</flux:text>
-                    <flux:heading size="lg">{{ $assessment->result_code->label() }}</flux:heading>
+            <div class="flex flex-col gap-5">
+                <div class="flex flex-col gap-4 rounded-2xl border border-l-4 p-6 {{ $outcomeStyles['panel'] }}">
+                    <div class="flex flex-col gap-2">
+                        <flux:text class="{{ $outcomeStyles['label'] }}">Application outcome</flux:text>
+                        <flux:heading size="lg" class="{{ $outcomeStyles['label'] }}">{{ $assessment->result_code->label() }}</flux:heading>
+                    </div>
+                    <flux:text>{{ $assessment->result_explanation }}</flux:text>
+                    <p class="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
+                        Research and demonstration support only. This result is not a clinical diagnosis, does not establish treatment response, and must not be used to select treatment.
+                    </p>
                 </div>
-                <flux:text>{{ $assessment->result_explanation }}</flux:text>
-                <p class="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
-                    Research and demonstration support only. This result is not a clinical diagnosis, does not establish treatment response, and must not be used to select treatment.
-                </p>
+
+                <aside aria-labelledby="plain-language-result" class="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+                    <flux:heading id="plain-language-result" size="sm">What this means</flux:heading>
+                    <flux:text>{{ $plainLanguageExplanation }}</flux:text>
+                </aside>
             </div>
 
             <dl class="grid content-start gap-4 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">

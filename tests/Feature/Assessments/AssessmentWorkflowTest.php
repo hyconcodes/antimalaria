@@ -119,6 +119,36 @@ test('a user cannot view another account assessment', function () {
     $this->get(route('assessments.show', $assessment->id))->assertNotFound();
 });
 
+test('assessment outcomes show distinct colors and plain-language explanations', function (AssessmentOutcome $outcome, string $colorClasses, string $plainLanguageExplanation) {
+    $user = User::factory()->create();
+    $assessment = Assessment::factory()->for($user)->create([
+        'result_code' => $outcome,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('assessments.show', $assessment->id))
+        ->assertOk()
+        ->assertSee($colorClasses, false)
+        ->assertSee('What this means')
+        ->assertSee($plainLanguageExplanation);
+})->with([
+    'resistance-associated pattern' => [
+        AssessmentOutcome::ResistanceAssociatedPattern,
+        'border-rose-300 bg-rose-50',
+        'At least one marker matched an approved rule.',
+    ],
+    'no qualifying marker' => [
+        AssessmentOutcome::NoQualifyingMarker,
+        'border-sky-300 bg-sky-50',
+        'The approved rules checked did not find a marker pattern that met their criteria.',
+    ],
+    'indeterminate result' => [
+        AssessmentOutcome::Indeterminate,
+        'border-amber-300 bg-amber-50',
+        'The available information was not enough for the system to give a clear result.',
+    ],
+]);
+
 test('assessment history only shows the owner’s matching records', function () {
     $owner = User::factory()->create();
     Assessment::factory()->for($owner)->create(['sample_reference' => 'OWNER-SYNTHETIC-MATCH']);
