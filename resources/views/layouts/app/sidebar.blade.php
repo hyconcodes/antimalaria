@@ -11,22 +11,29 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                <flux:sidebar.group heading="Workspace" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item :href="route('assessments.create')" :current="request()->routeIs('assessments.create')" wire:navigate>
+                        New assessment
+                    </flux:sidebar.item>
+                    <flux:sidebar.item :href="route('assessments.index')" :current="request()->routeIs('assessments.index', 'assessments.show')" wire:navigate>
+                        Assessment history
+                    </flux:sidebar.item>
+                    @can('viewAny', \App\Models\AssessmentRule::class)
+                        <flux:sidebar.item :href="route('admin.rules.index')" :current="request()->routeIs('admin.rules.*')" wire:navigate>
+                            Scientific rules
+                        </flux:sidebar.item>
+                    @endcan
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />
 
             <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
+                <flux:sidebar.item href="{{ route('home') }}#methodology">
+                    Methodology and limitations
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
